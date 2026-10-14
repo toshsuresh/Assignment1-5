@@ -1,4 +1,3 @@
-/* Shared selection state links all D3 views. No server or build step required. */
 "use strict";
 
 const DAY = 86400000;
@@ -213,7 +212,6 @@ function renderStats(series, days) {
     });
     body.append(tr);
   });
-  // Compare paired dates so unequal measurement coverage does not bias this claim.
   const differences = series[0].flatMap((row, i) =>
     present(row[metric]) && present(series[1][i][metric])
       ? [row[metric] - series[1][i][metric]]
@@ -232,8 +230,8 @@ function renderStats(series, days) {
 function createChart(selector, series, isRain) {
   const container = $(selector);
   const width = Math.max(280, container.clientWidth);
-  const height = isRain ? 170 : 235;
-  const margin = { left: 40, right: 10, top: 16, bottom: 28 };
+  const height = isRain ? 190 : 255;
+  const margin = { left: 52, right: 10, top: 16, bottom: 46 };
   const bottom = height - margin.bottom;
   const x = d3
     .scaleUtc()
@@ -292,6 +290,21 @@ function createChart(selector, series, isRain) {
     .attr("class", "axis")
     .attr("transform", `translate(0,${bottom})`)
     .call(timeAxis);
+  svg
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("x", (margin.left + width - margin.right) / 2)
+    .attr("y", height - 6)
+    .attr("text-anchor", "middle")
+    .text("Date (2017)");
+  svg
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -(margin.top + bottom) / 2)
+    .attr("y", 12)
+    .attr("text-anchor", "middle")
+    .text(isRain ? "Precipitation (in)" : "Temperature (°F)");
   if (!isRain && y.domain()[0] < 32 && y.domain()[1] > 32) {
     svg
       .append("line")
@@ -342,7 +355,6 @@ function createChart(selector, series, isRain) {
         .attr("stroke-width", 1.8)
         .attr("stroke-dasharray", i ? "5 3" : null)
         .attr("d", line);
-      // Individual points remain visible when a reading has missing neighbors.
       svg
         .append("g")
         .attr("fill", COLORS[i])
@@ -458,7 +470,7 @@ function renderOverview() {
       [width - 10, 49],
     ])
     .on("brush end", (event) => {
-      if (!event.sourceEvent) return; // Ignore programmatic synchronization.
+      if (!event.sourceEvent) return;
       if (!event.selection) {
         setRange(...extent);
         return;
@@ -551,34 +563,6 @@ function render() {
   createChart("#temperature-chart", series, false);
   createChart("#rain-chart", series, true);
   inspect(inspected, true);
-}
-
-function exportSelection() {
-  const rows = [];
-  currentStations().forEach((station, i) => {
-    for (const row of stationSeries(station.id, daysInRange())) {
-      rows.push({
-        slot: i ? "B" : "A",
-        station_id: station.id,
-        station: station.name,
-        state: station.state,
-        date: dateISO(row.date),
-        tmin_f: row.tmin,
-        tmax_f: row.tmax,
-        prcp_in: row.prcp,
-      });
-    }
-  });
-  const url = URL.createObjectURL(
-    new Blob([d3.csvFormat(rows)], { type: "text/csv;charset=utf-8" }),
-  );
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `weather-selection-${dateISO(range[0])}-${dateISO(range[1])}.csv`;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function wireControls() {
@@ -681,7 +665,6 @@ function wireControls() {
     setRange(...seasonRange("summer"));
     renderOverview();
   });
-  $("#download").addEventListener("click", exportSelection);
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
@@ -711,7 +694,7 @@ async function initialize() {
           tmax: numeric(row.tmax),
           prcp: numeric(row.prcp),
         });
-        return null; // Store once in the station index, not in a second CSV array.
+        return null;
       }),
     ]);
     stations = result[0];

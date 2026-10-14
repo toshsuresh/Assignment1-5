@@ -321,14 +321,6 @@ select + label {
   display: block;
   color: var(--ink);
 }
-.download {
-  width: 100%;
-  border: 1px solid #bfc7b9;
-  border-radius: 4px;
-  background: transparent;
-  padding: 10px;
-  font-size: 11px;
-}
 .visualization {
   padding: 26px 30px;
   min-width: 0;
@@ -470,7 +462,11 @@ select + label {
   font-size: 10px;
 }
 .axis path {
-  display: none;
+  stroke: var(--line);
+}
+.axis-label {
+  fill: var(--muted);
+  font-size: 11px;
 }
 .axis line {
   stroke: var(--line);
@@ -779,9 +775,6 @@ footer {
     margin-top: 6px;
     border: 0;
     padding: 0;
-  }
-  .download {
-    align-self: end;
   }
   .visualization {
     padding: 25px;

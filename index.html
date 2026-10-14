@@ -7,7 +7,7 @@
       name="description"
       content="Explore and compare daily temperature and precipitation at U.S. weather stations in January–September 2017."
     />
-    <title>Weather, Together: A 2017 weather explorer</title>
+    <title>U.S. Weather Explorer, 2017</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://d3js.org/d3.v7.min.js" defer></script>
@@ -17,7 +17,7 @@
     <a class="skip-link" href="#explorer">Skip to visualization</a>
     <header class="site-header wrap">
       <a class="brand" href="#"
-        ><span class="sun" aria-hidden="true">☀</span> WEATHER, TOGETHER</a
+        ><span class="sun" aria-hidden="true">☀</span> U.S. WEATHER EXPLORER</a
       >
       <nav aria-label="Main navigation">
         <a href="#explorer">Explore</a
@@ -28,19 +28,19 @@
     <main class="wrap">
       <section class="intro" aria-labelledby="title">
         <div>
-          <p class="eyebrow">ONE COUNTRY. MANY KINDS OF WEATHER.</p>
+          <p class="eyebrow">DAILY U.S. WEATHER, 2017</p>
           <h1 id="title">Same day.<br /><em>Different weather.</em></h1>
           <p class="lede">
             How do temperature and precipitation change across places and
-            seasons? Put two weather stations side by side and follow the story,
-            day by day.
+            seasons? Choose two weather stations and compare their daily
+            readings.
           </p>
         </div>
         <aside class="edition">
           <span class="edition-year">2017</span
           ><span class="edition-dates">JAN 01 TO SEP 21</span>
           <p>
-            264 days of observations.<br />A partial year, a lot to explore.
+            264 days of observations.
           </p>
           <a href="#about">Read the data notes ↓</a>
         </aside>
@@ -63,10 +63,10 @@
       >
         <aside class="controls">
           <div class="section-label">
-            <span>01 / SET THE SCENE</span
+            <span>01 / CONTROLS</span
             ><button id="reset" class="text-button">Reset all ↺</button>
           </div>
-          <h2>Pick your places.</h2>
+          <h2>Choose two stations.</h2>
           <p class="muted small">Choose a state, then a station.</p>
           <fieldset class="station-control station-a">
             <legend><span class="dot a"></span> STATION A</legend>
@@ -85,8 +85,8 @@
             <p class="coordinates" id="coords-b"></p>
           </fieldset>
           <div class="range-control">
-            <h3>Find a season</h3>
-            <p class="muted small">Or select any dates below.</p>
+            <h3>Date range</h3>
+            <p class="muted small">Choose a season or enter dates.</p>
             <div class="presets" role="group" aria-label="Season date presets">
               <button data-season="all" aria-pressed="true">All dates</button
               ><button data-season="winter" aria-pressed="false">
@@ -115,21 +115,18 @@
           <div class="try-note">
             <span aria-hidden="true">↗</span>
             <p>
-              <strong>Try a different perspective</strong>Compare Seattle and
-              Phoenix, then select summer. Does the wetter place stay wetter?
+              <strong>Example comparison</strong>Seattle and Phoenix in summer.
+              Does the wetter station stay wetter?
             </p>
             <button id="try-pair" class="text-button">
               Explore this pair →
             </button>
           </div>
-          <button id="download" class="download">
-            ↓ Download this selection
-          </button>
         </aside>
         <div class="visualization">
           <div class="chart-top">
             <div>
-              <p class="section-label">02 / FOLLOW THE PATTERN</p>
+              <p class="section-label">02 / CHARTS</p>
               <h2 id="range-label"></h2>
             </div>
             <span id="day-count" class="pill"></span>
@@ -139,7 +136,7 @@
           <section class="chart-section" aria-labelledby="temperature-heading">
             <div class="chart-heading">
               <div>
-                <h3 id="temperature-heading">The shape of a season</h3>
+                <h3 id="temperature-heading">Temperature</h3>
                 <p id="temp-caption" class="muted small">
                   Daily high temperature · °F
                 </p>
@@ -170,7 +167,7 @@
           >
             <div class="chart-heading">
               <div>
-                <h3 id="rain-heading">When the rain arrives</h3>
+                <h3 id="rain-heading">Precipitation</h3>
                 <p class="muted small">
                   Daily precipitation · inches
                 </p>
@@ -197,7 +194,7 @@
           ></div>
           <div class="detail-panel" aria-label="Daily details">
             <div class="detail-date">
-              <label for="inspect-date">A CLOSER LOOK</label
+              <label for="inspect-date">DAILY DETAILS</label
               ><input type="date" id="inspect-date" /><span class="small muted"
                 >Hover, tap, or choose a day.</span
               >
@@ -265,6 +262,12 @@
               comparison keeps the question focused while letting readers choose
               their own locations.
             </p>
+            <p>
+              Example finding: across their observed days, Seattle recorded
+              about 28.6 inches of precipitation and Phoenix about 4.7 inches.
+              In summer (June to August), Phoenix recorded more, with 2.33
+              inches to Seattle’s 1.54 inches.
+            </p>
           </article>
           <article>
             <h3>Design Rationale</h3>
@@ -285,13 +288,26 @@
               relationships visible but make the sequence of days harder to
               follow. Linked time series directly support the chosen question.
             </p>
+            <p>
+              With 1,561 stations, dynamic queries let readers pick any two places
+              without crowding the charts with every station at once. The full
+              period covers 264 days, which is too dense to read day by day, so
+              the overview strip lets readers zoom into a season or a week while
+              still seeing where that range sits in the year. Exact values are
+              hard to read from dense lines and bars, so hovering shows both
+              stations’ readings for one day instead of labeling every point.
+              We show daily highs or daily lows one at a time because drawing
+              both for two stations would put four overlapping lines on one
+              chart.
+            </p>
           </article>
           <article>
             <h3>Implemented Interactions</h3>
             <ul>
               <li>
                 <strong>Category I, dynamic queries:</strong> state, station,
-                season, and date controls update both charts and every summary.
+                season, date, and daily high or low controls update both charts
+                and every summary. Reset controls restore the full view.
               </li>
               <li>
                 <strong>Category II, zooming:</strong> dragging across the
@@ -306,11 +322,6 @@
                 hovering or tapping either chart highlights the same date in
                 both and reveals both stations’ readings. Arrow keys and the
                 daily date picker offer another way to inspect observations.
-              </li>
-              <li>
-                <strong>Category II, encoding choice:</strong> switch between
-                daily highs and lows. Reset controls restore the full view, and
-                exporting saves the selected station records.
               </li>
             </ul>
           </article>
@@ -385,42 +396,34 @@
               we had to stop programmatic brush moves from re-triggering
               updates, snap brushed selections to whole days, and keep the
               inspected day inside the selected range. Debugging these feedback
-              loops took more iterations than any other part of the project.
+              loops took the most iterations.
             </p>
             <p>
-              <strong>Design reflection:</strong> The biggest lesson was that
-              the task should drive the encoding. Our question asks how two
-              places change over the same days, so we put time on a shared
-              horizontal axis, since position on a common scale is the most
-              accurate channel for comparison. We also learned that the two
-              measures need different scale choices. Temperature is an interval
-              value, so its axis fits the data range instead of starting at
-              zero, which keeps seasonal swings visible. Precipitation bars use
-              length to compare amounts, so they always start at zero.
+              <strong>Design reflection:</strong> We chose encodings based on
+              the comparison task. Time is on a shared horizontal axis because
+              position on a common scale is the most accurate channel for
+              comparing values. Temperature is an interval value, so its axis
+              fits the data range instead of starting at zero. Precipitation
+              bars encode amount by length, so they start at zero.
             </p>
             <p>
-              Working with real data showed us how much a table format can hide.
-              A missing precipitation reading looks a lot like a dry day, so we
-              kept missing values blank, broke lines at gaps, and added a
-              coverage table so readers can tell the difference. We gave
-              Station B a dashed line as a second cue beside color, and added
-              reset buttons and a visible date range so users can always see
-              and undo their current selection. We also showed the page to peers
-              and got feedback. Reviewing the page against the rubric led us to
-              rename the write-up sections to match it and to tighten the
-              write-up text.
+              Missing readings were the main data issue, since a blank
+              precipitation value can look like a dry day. We kept missing
+              values blank, broke lines at gaps, and added a coverage table. We
+              also gave Station B a dashed line as a second cue beside color,
+              and added reset buttons and a visible date range. We showed the
+              page to peers and got feedback, and we revised the write-up to
+              match the assignment requirements.
             </p>
           </article>
           <article>
             <h3>AI Usage</h3>
             <p>
-              We used OpenAI Codex to help inspect the data, propose the linked
-              comparison design, clean the data, write the D3
-              implementation, draft documentation, and verify behavior. We
-              chose the weather dataset and decided on the comparison focus and
-              technology. We used Claude Code (Anthropic) to review the project
-              against the assignment rubric and to revise the write-up text and
-              styling.
+              We used AI as a peer programmer. OpenAI's Codex and Anthropic's Claude helped us inspect
+              and clean the data and write and debug the D3 code. We also used
+              it to reason through our design ideas, such as which chart types
+              fit a two-station comparison and how the linked interactions
+              should work, and to check that the page behaved as intended.
             </p>
           </article>
           <article>
@@ -454,7 +457,7 @@
       </section>
     </main>
     <footer class="wrap">
-      <span>WEATHER, TOGETHER</span
+      <span>U.S. WEATHER EXPLORER</span
       ><span>CMSC 471 · FALL 2026 · ASSIGNMENT 01</span
       ><a href="#">Back to top ↑</a>
     </footer>
