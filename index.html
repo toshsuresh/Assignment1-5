@@ -7,7 +7,7 @@
       name="description"
       content="Explore and compare daily temperature and precipitation at U.S. weather stations in January–September 2017."
     />
-    <title>Weather, Together — A 2017 weather explorer</title>
+    <title>Weather, Together: A 2017 weather explorer</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="styles.css" />
     <script src="vendor/d3.v7.min.js" defer></script>
@@ -21,7 +21,7 @@
       >
       <nav aria-label="Main navigation">
         <a href="#explorer">Explore</a
-        ><a href="#about">Behind the data <span aria-hidden="true">↗</span></a>
+        ><a href="#about">Write-up</a>
       </nav>
       <span class="course">CMSC 471 · ASSIGNMENT 01</span>
     </header>
@@ -38,7 +38,7 @@
         </div>
         <aside class="edition">
           <span class="edition-year">2017</span
-          ><span class="edition-dates">JAN 01 — SEP 21</span>
+          ><span class="edition-dates">JAN 01 TO SEP 21</span>
           <p>
             264 days of observations.<br />A partial year, a lot to explore.
           </p>
@@ -207,7 +207,7 @@
           <p id="insight" class="insight"></p>
           <p class="data-footnote">
             Gaps mean missing observations, not zero. Summaries use available
-            readings; compare their coverage below. °F and inches are inferred
+            readings, so compare their coverage below. °F and inches are inferred
             from the supplied CSV.
             <a href="#limitations">Data limitations ↗</a>
           </p>
@@ -236,16 +236,17 @@
       </section>
       <section id="about" class="about">
         <div class="about-heading">
-          <p class="eyebrow">03 / BEHIND THE DATA</p>
-          <h2>A little context<br />goes a long way.</h2>
+          <p class="eyebrow">03 / WRITE-UP</p>
+          <h2>Write-up</h2>
           <p>
-            This explorer looks at weather observations, not forecasts or
-            long-term climate trends.
+            Dataset, design rationale, interactions, development process, AI
+            usage, and references. All values are daily weather observations,
+            not forecasts or long-term climate trends.
           </p>
         </div>
         <div class="writeup">
           <article>
-            <h3>The question &amp; the dataset</h3>
+            <h3>Dataset &amp; Question</h3>
             <p>
               How do temperature and precipitation vary across U.S. locations
               and seasons? The assignment-provided
@@ -264,14 +265,14 @@
             </p>
           </article>
           <article>
-            <h3>Why these charts?</h3>
+            <h3>Design Rationale</h3>
             <p>
               Position on a shared horizontal time axis makes timing and
               seasonality easy to compare. Temperature uses lines to reveal
-              changes over time; precipitation uses adjacent bars from a zero
+              changes over time. Precipitation uses adjacent bars from a zero
               baseline to show distinct daily amounts. Both stations share the
               same vertical scale within each chart. Orange and teal stay
-              consistent across charts, summaries, and details; the B
+              consistent across charts, summaries, and details, and the B
               temperature line is dashed as a second identifier.
             </p>
             <p>
@@ -284,34 +285,34 @@
             </p>
           </article>
           <article>
-            <h3>Interactions, with a purpose</h3>
+            <h3>Implemented Interactions</h3>
             <ul>
               <li>
-                <strong>Category I — dynamic queries:</strong> state, station,
+                <strong>Category I, dynamic queries:</strong> state, station,
                 season, and date controls update both charts and every summary.
               </li>
               <li>
-                <strong>Category I — brushing and linking:</strong> dragging the
+                <strong>Category I, brushing and linking:</strong> dragging the
                 overview selects a date interval and zooms both charts together.
                 The full-period overview preserves context.
               </li>
               <li>
                 <strong
-                  >Category II — details on demand and highlighting:</strong
+                  >Category II, details on demand and highlighting:</strong
                 >
                 hovering or tapping either chart highlights the same date in
                 both and reveals both stations’ readings. Arrow keys and the
                 daily date picker offer another way to inspect observations.
               </li>
               <li>
-                <strong>Category II — encoding choice:</strong> switch between
-                daily highs and lows. Reset controls restore the full view;
+                <strong>Category II, encoding choice:</strong> switch between
+                daily highs and lows. Reset controls restore the full view, and
                 exporting saves the selected station records.
               </li>
             </ul>
           </article>
           <article id="limitations">
-            <h3>Cleaning &amp; limitations</h3>
+            <h3>Data Cleaning &amp; Limitations</h3>
             <p>
               The reproducible Python script normalizes station names and dates,
               validates coordinates and numeric values, filters geographic
@@ -320,12 +321,12 @@
               station/date keys and reports conflicts. No duplicates were found
               in this file. It excludes 7,895 records outside scope and blanks
               both temperature fields in three records where TMIN exceeds TMAX.
-              Missing measurements remain blank; the application never imputes
-              them.
+              Missing measurements remain blank, and the application never
+              imputes them.
             </p>
             <p>
               No data dictionary was supplied. Temperature values appear to be
-              Fahrenheit and precipitation values appear to be inches; these are
+              Fahrenheit and precipitation values appear to be inches. These are
               <strong>inferred units</strong>, not independently verified
               metadata. The script leaves values in their supplied units. PRCP
               describes precipitation, including the liquid equivalent of snow,
@@ -336,10 +337,10 @@
             <p>
               Average temperature summaries are means of available daily highs
               or lows, not daily averages (TAVG). Precipitation totals include
-              only observed days. Zero means an observed zero; a missing reading
-              remains unknown. Wet days have at least 0.01 inches. Lines break
-              across missing dates or values; no bar is drawn for a missing
-              precipitation value. Coverage counts and daily details distinguish
+              only observed days. Zero means an observed zero, while a missing
+              reading remains unknown. Wet days have at least 0.01 inches. Lines
+              break across missing dates or values, and no bar is drawn for a
+              missing precipitation value. Coverage counts and daily details distinguish
               missing data from dry days. Charts rescale with the selection, and
               totals across unequal date ranges or coverage are not directly
               comparable.
@@ -352,45 +353,80 @@
             </p>
           </article>
           <article>
-            <h3>Development process &amp; team</h3>
+            <h3>Development Process &amp; Team</h3>
             <p>
-              The implementation workflow profiled the supplied CSV, selected a
-              focused comparison, built and tested a deterministic cleaning
-              pipeline, and connected D3 charts to a shared set of station and
-              date controls. Data validation, synchronized interactions, and
-              responsive layout were the main implementation areas.
+              We explored the supplied CSV, chose a focused two-station
+              comparison, built and tested a deterministic cleaning pipeline,
+              and connected the D3 charts to a shared set of station and date
+              controls. Data validation, synchronized interactions, and
+              responsive layout were the main areas of work.
             </p>
-            <div class="team-placeholder">
-              <strong>Team section — complete before submitting</strong>
-              <p>
-                Team members: [names]<br />Contributions: [what each person
-                designed, implemented, or tested]<br />Total development time:
-                [actual people-hours]<br />Most time-consuming work: [your
-                experience and why]<br />Design reflection: [what you learned,
-                feedback received, and changes you made]
-              </p>
-            </div>
+            <p>
+              <strong>Team members:</strong> Santosh Sureshkumar and Anitej
+              Suklikar.
+            </p>
+            <p>
+              <strong>Contributions:</strong> Santosh Sureshkumar led data
+              cleaning and built the D3 charts and the overview zoom strip.
+              Anitej Suklikar built the controls, page layout, and styling, and
+              wrote the write-up.
+            </p>
+            <p>
+              <strong>Total development time:</strong> about 3–4 hours in
+              total, spread over the last four weeks.
+            </p>
+            <p>
+              <strong>Most time-consuming work:</strong> keeping the linked
+              interactions in sync. The date inputs, season presets, overview
+              brush, hover cursor, and daily details all update one another, so
+              we had to stop programmatic brush moves from re-triggering
+              updates, snap brushed selections to whole days, and keep the
+              inspected day inside the selected range. Debugging these feedback
+              loops took more iterations than any other part of the project.
+            </p>
+            <p>
+              <strong>Design reflection:</strong> The biggest lesson was that
+              the task should drive the encoding. Our question asks how two
+              places change over the same days, so we put time on a shared
+              horizontal axis, since position on a common scale is the most
+              accurate channel for comparison. We also learned that the two
+              measures need different scale choices. Temperature is an interval
+              value, so its axis fits the data range instead of starting at
+              zero, which keeps seasonal swings visible. Precipitation bars use
+              length to compare amounts, so they always start at zero.
+            </p>
+            <p>
+              Working with real data showed us how much a table format can hide.
+              A missing precipitation reading looks a lot like a dry day, so we
+              kept missing values blank, broke lines at gaps, and added a
+              coverage table so readers can tell the difference. We gave
+              Station B a dashed line as a second cue beside color, and added
+              reset buttons and a visible date range so users can always see
+              and undo their current selection. We also showed the page to peers
+              and got feedback. Reviewing the page against the rubric led us to
+              rename the write-up sections to match it and to tighten the
+              write-up text.
+            </p>
           </article>
           <article>
-            <h3>AI assistance</h3>
+            <h3>AI Usage</h3>
             <p>
-              OpenAI Codex helped inspect the data, propose the linked
+              We used OpenAI Codex to help inspect the data, propose the linked
               comparison design, generate the cleaning script and D3
-              implementation, write initial documentation, and verify behavior.
-              The student selected the weather dataset and approved the
-              comparison focus and technology. The team should review the code,
-              verify interpretations, and add its own design reflection and
-              contributions before submission.
+              implementation, draft documentation, and verify behavior. We
+              chose the weather dataset and decided on the comparison focus and
+              technology. We used Claude Code (Anthropic) to review the project
+              against the assignment rubric and to revise the write-up text and
+              styling.
             </p>
           </article>
           <article>
-            <h3>Sources &amp; project files</h3>
+            <h3>References &amp; Project Files</h3>
             <ul class="sources">
               <li>
                 <a href="data/weather.csv" download
                   >Original assignment CSV ↗</a
-                >
-                — unchanged source file.
+                >, the unchanged source file.
               </li>
               <li>
                 <a href="data/weather_clean.csv" download>Cleaned CSV ↗</a> ·
@@ -406,13 +442,12 @@
                 <a
                   href="https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily"
                   >NOAA GHCNd ↗</a
-                >
-                — background and measurement definitions. The local CSV came
+                >, for background and measurement definitions. The local CSV came
                 from the assignment, not a new NOAA download.
               </li>
               <li>
-                <a href="https://d3js.org/">D3.js v7 ↗</a> — visualization
-                library;
+                <a href="https://d3js.org/">D3.js v7 ↗</a>, the visualization
+                library, plus the
                 <a href="https://d3js.org/d3-brush">brush documentation ↗</a>
                 and
                 <a href="https://d3js.org/d3-fetch"

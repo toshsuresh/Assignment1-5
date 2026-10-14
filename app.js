@@ -63,8 +63,8 @@ const dateLabel = (value) => d3.utcFormat("%b %-d")(new Date(value));
 const numeric = (value) => (value === "" ? null : Number(value));
 const present = (value) =>
   value !== null && value !== undefined && Number.isFinite(value);
-const fmt = (value, digits = 1) =>
-  present(value) ? value.toFixed(digits) : "—";
+const fmt = (value, digits = 1, suffix = "") =>
+  present(value) ? `${value.toFixed(digits)}${suffix}` : "n/a";
 const shortName = (station) =>
   station.name
     .replace(/ INTL AP$/, " Intl.")
@@ -173,7 +173,7 @@ function renderStats(series, days) {
   const metrics = [
     {
       label: `Mean daily ${metric === "tmax" ? "high" : "low"}`,
-      values: summaries.map((s) => `${fmt(s.mean)}°`),
+      values: summaries.map((s) => fmt(s.mean, 1, "°")),
       note: "°F · available observations",
     },
     {
@@ -200,9 +200,9 @@ function renderStats(series, days) {
     const tr = document.createElement("tr");
     const values = [
       `${i === 0 ? "A" : "B"} · ${shortName(station)}, ${station.state}`,
-      `${fmt(summary.mean)} °F`,
+      fmt(summary.mean, 1, " °F"),
       `${summary.tempCount} / ${days.length}`,
-      `${fmt(summary.total, 2)} in`,
+      fmt(summary.total, 2, " in"),
       `${summary.rainCount} / ${days.length}`,
       fmt(summary.wet, 0),
     ];
@@ -225,7 +225,7 @@ function renderStats(series, days) {
     (s) => s.tempCount < days.length || s.rainCount < days.length,
   );
   $("#insight").textContent = present(delta)
-    ? `${shortName(selected[0])} had ${Math.abs(delta).toFixed(1)}°F ${delta >= 0 ? "higher" : "lower"} daily ${metric === "tmax" ? "highs" : "lows"} on average than ${shortName(selected[1])}, across ${differences.length} days with readings at both stations.${coverage ? " Some readings are missing; check observation coverage." : ""}`
+    ? `${shortName(selected[0])} had ${Math.abs(delta).toFixed(1)}°F ${delta >= 0 ? "higher" : "lower"} daily ${metric === "tmax" ? "highs" : "lows"} on average than ${shortName(selected[1])}, across ${differences.length} days with readings at both stations.${coverage ? " Some readings are missing, so check observation coverage." : ""}`
     : "These stations have no overlapping temperature readings in this date range. Try another station or a wider range.";
 }
 
