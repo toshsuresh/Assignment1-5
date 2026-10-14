@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Explore and compare daily temperature and precipitation at U.S. weather stations in January–September 2017."
+    />
+    <title>Weather, Together — A 2017 weather explorer</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="vendor/d3.v7.min.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#explorer">Skip to visualization</a>
+    <header class="site-header wrap">
+      <a class="brand" href="#"
+        ><span class="sun" aria-hidden="true">☀</span> WEATHER, TOGETHER</a
+      >
+      <nav aria-label="Main navigation">
+        <a href="#explorer">Explore</a
+        ><a href="#about">Behind the data <span aria-hidden="true">↗</span></a>
+      </nav>
+      <span class="course">CMSC 471 · ASSIGNMENT 01</span>
+    </header>
+    <main class="wrap">
+      <section class="intro" aria-labelledby="title">
+        <div>
+          <p class="eyebrow">ONE COUNTRY. MANY KINDS OF WEATHER.</p>
+          <h1 id="title">Same day.<br /><em>Different weather.</em></h1>
+          <p class="lede">
+            How do temperature and precipitation change across places and
+            seasons? Put two weather stations side by side and follow the story,
+            day by day.
+          </p>
+        </div>
+        <aside class="edition">
+          <span class="edition-year">2017</span
+          ><span class="edition-dates">JAN 01 — SEP 21</span>
+          <p>
+            264 days of observations.<br />A partial year, a lot to explore.
+          </p>
+          <a href="#about">Read the data notes ↓</a>
+        </aside>
+      </section>
+      <div id="load-status" class="status" role="status">
+        Loading station observations… The first load includes the full cleaned
+        dataset.
+      </div>
+      <noscript
+        ><p class="status">
+          Enable JavaScript to use the charts. You can still download the CSV
+          and read the project notes below.
+        </p></noscript
+      >
+      <section
+        id="explorer"
+        class="explorer"
+        aria-label="Interactive weather explorer"
+        hidden
+      >
+        <aside class="controls">
+          <div class="section-label">
+            <span>01 / SET THE SCENE</span
+            ><button id="reset" class="text-button">Reset all ↺</button>
+          </div>
+          <h2>Pick your places.</h2>
+          <p class="muted small">Choose a state, then a station.</p>
+          <fieldset class="station-control station-a">
+            <legend><span class="dot a"></span> STATION A</legend>
+            <label for="state-a">State</label
+            ><select id="state-a"></select>
+            <label for="station-a">Weather station</label
+            ><select id="station-a"></select>
+            <p class="coordinates" id="coords-a"></p>
+          </fieldset>
+          <fieldset class="station-control station-b">
+            <legend><span class="dot b"></span> STATION B</legend>
+            <label for="state-b">State</label
+            ><select id="state-b"></select>
+            <label for="station-b">Weather station</label
+            ><select id="station-b"></select>
+            <p class="coordinates" id="coords-b"></p>
+          </fieldset>
+          <div class="range-control">
+            <h3>Find a season</h3>
+            <p class="muted small">Or select any dates below.</p>
+            <div class="presets" role="group" aria-label="Season date presets">
+              <button data-season="all" aria-pressed="true">All dates</button
+              ><button data-season="winter" aria-pressed="false">
+                Jan–Feb
+              </button>
+              <button data-season="spring" aria-pressed="false">Spring</button
+              ><button data-season="summer" aria-pressed="false">Summer</button
+              ><button data-season="fall" aria-pressed="false">Sep 1–21</button>
+            </div>
+            <label for="start-date">From</label
+            ><input
+              id="start-date"
+              type="date"
+              min="2017-01-01"
+              max="2017-09-21"
+            />
+            <label for="end-date">Through</label
+            ><input
+              id="end-date"
+              type="date"
+              min="2017-01-01"
+              max="2017-09-21"
+            />
+            <p id="date-error" class="error small" role="alert"></p>
+          </div>
+          <div class="try-note">
+            <span aria-hidden="true">↗</span>
+            <p>
+              <strong>Try a different perspective</strong>Compare Seattle and
+              Phoenix, then select summer. Does the wetter place stay wetter?
+            </p>
+            <button id="try-pair" class="text-button">
+              Explore this pair →
+            </button>
+          </div>
+          <button id="download" class="download">
+            ↓ Download this selection
+          </button>
+        </aside>
+        <div class="visualization">
+          <div class="chart-top">
+            <div>
+              <p class="section-label">02 / FOLLOW THE PATTERN</p>
+              <h2 id="range-label"></h2>
+            </div>
+            <span id="day-count" class="pill"></span>
+          </div>
+          <div id="legend" class="legend" aria-label="Chart legend"></div>
+          <div class="stats" id="stats" aria-live="polite"></div>
+          <section class="chart-section" aria-labelledby="temperature-heading">
+            <div class="chart-heading">
+              <div>
+                <h3 id="temperature-heading">The shape of a season</h3>
+                <p id="temp-caption" class="muted small">
+                  Daily high temperature · °F
+                </p>
+              </div>
+              <div
+                class="segmented"
+                role="group"
+                aria-label="Temperature measure"
+              >
+                <button data-metric="tmax" aria-pressed="true">
+                  Daily high</button
+                ><button data-metric="tmin" aria-pressed="false">
+                  Daily low
+                </button>
+              </div>
+            </div>
+            <div
+              id="temperature-chart"
+              class="chart"
+              tabindex="0"
+              role="group"
+              aria-label="Daily temperature chart. Use left and right arrow keys to inspect a day."
+            ></div>
+          </section>
+          <section
+            class="chart-section rainfall"
+            aria-labelledby="rain-heading"
+          >
+            <div class="chart-heading">
+              <div>
+                <h3 id="rain-heading">When the rain arrives</h3>
+                <p class="muted small">
+                  Daily precipitation · inches · includes liquid-equivalent snow
+                </p>
+              </div>
+              <span class="chart-hint">HOVER OR TAP TO INSPECT</span>
+            </div>
+            <div
+              id="rain-chart"
+              class="chart"
+              tabindex="0"
+              role="group"
+              aria-label="Daily precipitation chart. Use left and right arrow keys to inspect a day."
+            ></div>
+          </section>
+          <div class="brush-heading">
+            <span>DRAG BELOW TO ZOOM BOTH CHARTS</span
+            ><button id="reset-range" class="text-button">
+              Show all dates ↔
+            </button>
+          </div>
+          <div
+            id="overview-chart"
+            aria-label="Full-period temperature overview. Drag to select dates, or use the date inputs."
+          ></div>
+          <div class="detail-panel" aria-label="Daily details">
+            <div class="detail-date">
+              <label for="inspect-date">A CLOSER LOOK</label
+              ><input type="date" id="inspect-date" /><span class="small muted"
+                >Hover, tap, or choose a day.</span
+              >
+            </div>
+            <div id="daily-details" aria-live="polite"></div>
+          </div>
+          <p id="insight" class="insight"></p>
+          <p class="data-footnote">
+            Gaps mean missing observations, not zero. Summaries use available
+            readings; compare their coverage below. °F and inches are inferred
+            from the supplied CSV.
+            <a href="#limitations">Data limitations ↗</a>
+          </p>
+          <details class="coverage">
+            <summary>Observation coverage &amp; summary values</summary>
+            <div class="table-scroll">
+              <table>
+                <caption>
+                  Available readings in the selected date range
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Station</th>
+                    <th scope="col">Mean selected temperature</th>
+                    <th scope="col">Temperature days</th>
+                    <th scope="col">Total precipitation</th>
+                    <th scope="col">Precipitation days</th>
+                    <th scope="col">Wet days ≥ 0.01 in</th>
+                  </tr>
+                </thead>
+                <tbody id="coverage-body"></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+      </section>
+      <section id="about" class="about">
+        <div class="about-heading">
+          <p class="eyebrow">03 / BEHIND THE DATA</p>
+          <h2>A little context<br />goes a long way.</h2>
+          <p>
+            This explorer looks at weather observations, not forecasts or
+            long-term climate trends.
+          </p>
+        </div>
+        <div class="writeup">
+          <article>
+            <h3>The question &amp; the dataset</h3>
+            <p>
+              How do temperature and precipitation vary across U.S. locations
+              and seasons? The assignment-provided
+              <code>weather.csv</code> contains 416,937 daily station records.
+              The handout attributes the transformed dataset to NOAA’s Global
+              Historical Climatology Network daily (GHCNd). This project focuses
+              on daily minimum temperature (TMIN), maximum temperature (TMAX),
+              and precipitation (PRCP) at stations in the 50 states and D.C.
+            </p>
+            <p>
+              The cleaned subset has 409,042 records at 1,561 station locations,
+              covering January 1–September 21, 2017. A station represents its
+              measurement location, not an entire state. The two-station
+              comparison keeps the question focused while letting readers choose
+              their own locations.
+            </p>
+          </article>
+          <article>
+            <h3>Why these charts?</h3>
+            <p>
+              Position on a shared horizontal time axis makes timing and
+              seasonality easy to compare. Temperature uses lines to reveal
+              changes over time; precipitation uses adjacent bars from a zero
+              baseline to show distinct daily amounts. Both stations share the
+              same vertical scale within each chart. Orange and teal stay
+              consistent across charts, summaries, and details; the B
+              temperature line is dashed as a second identifier.
+            </p>
+            <p>
+              A map was considered, but it would emphasize location over
+              seasonal change. A state-average view would obscure variation
+              between stations and weight states unevenly as coverage changes. A
+              temperature–precipitation scatterplot would make individual
+              relationships visible but make the sequence of days harder to
+              follow. Linked time series directly support the chosen question.
+            </p>
+          </article>
+          <article>
+            <h3>Interactions, with a purpose</h3>
+            <ul>
+              <li>
+                <strong>Category I — dynamic queries:</strong> state, station,
+                season, and date controls update both charts and every summary.
+              </li>
+              <li>
+                <strong>Category I — brushing and linking:</strong> dragging the
+                overview selects a date interval and zooms both charts together.
+                The full-period overview preserves context.
+              </li>
+              <li>
+                <strong
+                  >Category II — details on demand and highlighting:</strong
+                >
+                hovering or tapping either chart highlights the same date in
+                both and reveals both stations’ readings. Arrow keys and the
+                daily date picker offer another way to inspect observations.
+              </li>
+              <li>
+                <strong>Category II — encoding choice:</strong> switch between
+                daily highs and lows. Reset controls restore the full view;
+                exporting saves the selected station records.
+              </li>
+            </ul>
+          </article>
+          <article id="limitations">
+            <h3>Cleaning &amp; limitations</h3>
+            <p>
+              The reproducible Python script normalizes station names and dates,
+              validates coordinates and numeric values, filters geographic
+              scope, and creates station identifiers from name, state, and
+              coordinates. It retains the first record for duplicate
+              station/date keys and reports conflicts. No duplicates were found
+              in this file. It excludes 7,895 records outside scope and blanks
+              both temperature fields in three records where TMIN exceeds TMAX.
+              Missing measurements remain blank; the application never imputes
+              them.
+            </p>
+            <p>
+              No data dictionary was supplied. Temperature values appear to be
+              Fahrenheit and precipitation values appear to be inches; these are
+              <strong>inferred units</strong>, not independently verified
+              metadata. The script leaves values in their supplied units. PRCP
+              describes precipitation, including the liquid equivalent of snow,
+              rather than rain alone. Raw NOAA files use different units, so
+              this transformed CSV should not be interpreted using their native
+              scaling.
+            </p>
+            <p>
+              Average temperature summaries are means of available daily highs
+              or lows, not daily averages (TAVG). Precipitation totals include
+              only observed days. Zero means an observed zero; a missing reading
+              remains unknown. Wet days have at least 0.01 inches. Lines break
+              across missing dates or values; no bar is drawn for a missing
+              precipitation value. Coverage counts and daily details distinguish
+              missing data from dry days. Charts rescale with the selection, and
+              totals across unequal date ranges or coverage are not directly
+              comparable.
+            </p>
+            <p>
+              January–February and September 1–21 are partial seasons, and the
+              year ends early in this file. A single partial year cannot
+              establish long-term climate trends. Station observation times and
+              local conditions may also differ.
+            </p>
+          </article>
+          <article>
+            <h3>Development process &amp; team</h3>
+            <p>
+              The implementation workflow profiled the supplied CSV, selected a
+              focused comparison, built and tested a deterministic cleaning
+              pipeline, and connected D3 charts to a shared set of station and
+              date controls. Data validation, synchronized interactions, and
+              responsive layout were the main implementation areas.
+            </p>
+            <div class="team-placeholder">
+              <strong>Team section — complete before submitting</strong>
+              <p>
+                Team members: [names]<br />Contributions: [what each person
+                designed, implemented, or tested]<br />Total development time:
+                [actual people-hours]<br />Most time-consuming work: [your
+                experience and why]<br />Design reflection: [what you learned,
+                feedback received, and changes you made]
+              </p>
+            </div>
+          </article>
+          <article>
+            <h3>AI assistance</h3>
+            <p>
+              OpenAI Codex helped inspect the data, propose the linked
+              comparison design, generate the cleaning script and D3
+              implementation, write initial documentation, and verify behavior.
+              The student selected the weather dataset and approved the
+              comparison focus and technology. The team should review the code,
+              verify interpretations, and add its own design reflection and
+              contributions before submission.
+            </p>
+          </article>
+          <article>
+            <h3>Sources &amp; project files</h3>
+            <ul class="sources">
+              <li>
+                <a href="data/weather.csv" download
+                  >Original assignment CSV ↗</a
+                >
+                — unchanged source file.
+              </li>
+              <li>
+                <a href="data/weather_clean.csv" download>Cleaned CSV ↗</a> ·
+                <a href="data/stations.json">Station metadata ↗</a> ·
+                <a href="data/cleaning_report.json">Cleaning report ↗</a>
+              </li>
+              <li>
+                <a href="scripts/clean_data.py" download
+                  >Reproducible cleaning script ↗</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily"
+                  >NOAA GHCNd ↗</a
+                >
+                — background and measurement definitions. The local CSV came
+                from the assignment, not a new NOAA download.
+              </li>
+              <li>
+                <a href="https://d3js.org/">D3.js v7 ↗</a> — visualization
+                library;
+                <a href="https://d3js.org/d3-brush">brush documentation ↗</a>
+                and
+                <a href="https://d3js.org/d3-fetch"
+                  >CSV loading documentation ↗</a
+                >. Charts are custom implementations using these APIs, not
+                adaptations of a specific example.
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer class="wrap">
+      <span>WEATHER, TOGETHER</span
+      ><span>CMSC 471 · FALL 2026 · ASSIGNMENT 01</span
+      ><a href="#">Back to top ↑</a>
+    </footer>
+  </body>
+</html>
