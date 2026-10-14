@@ -563,9 +563,9 @@ function exportSelection() {
         station: station.name,
         state: station.state,
         date: dateISO(row.date),
-        tmin_f_inferred: row.tmin,
-        tmax_f_inferred: row.tmax,
-        prcp_in_inferred: row.prcp,
+        tmin_f: row.tmin,
+        tmax_f: row.tmax,
+        prcp_in: row.prcp,
       });
     }
   });
@@ -694,7 +694,7 @@ function wireControls() {
 async function initialize() {
   try {
     if (typeof d3 === "undefined")
-      throw new Error("The local D3 library could not be loaded.");
+      throw new Error("The D3 library could not be loaded.");
     const dates = new Map();
     const result = await Promise.all([
       d3.json("data/stations.json"),
@@ -738,7 +738,7 @@ async function initialize() {
     console.error(error);
     $("#load-status").hidden = false;
     $("#load-status").textContent =
-      "The weather data could not be loaded. Run “python3 -m http.server 8000” in the project folder and open http://localhost:8000. On a hosted site, check that the data and vendor folders were uploaded, then reload.";
+      "The weather data could not be loaded. Run “python3 -m http.server 8000” in the project folder and open http://localhost:8000. On a hosted site, check that the data folder was uploaded and you are online, then reload.";
     $("#load-status").setAttribute("role", "alert");
     $("#explorer").hidden = true;
   }

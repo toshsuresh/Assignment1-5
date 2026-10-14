@@ -18,10 +18,10 @@
   "scope": "50 U.S. states and DC; 2017 only",
   "source_sha256": "27fadbc577ca38bee0d205d87d5b680299cdf05c9a1f9a80d1a37c6a21740324",
   "station_count": 1561,
-  "unit_note": "No source data dictionary was supplied. Values appear already converted to Fahrenheit and inches. No unit conversion applied.",
+  "unit_note": "Units come from the weather.txt column descriptions supplied with the dataset. Values are already in Fahrenheit and inches. No unit conversion applied.",
   "units": {
-    "prcp": "inches (inferred)",
-    "tmax": "Fahrenheit (inferred)",
-    "tmin": "Fahrenheit (inferred)"
+    "prcp": "inches",
+    "tmax": "Fahrenheit",
+    "tmin": "Fahrenheit"
   }
 }

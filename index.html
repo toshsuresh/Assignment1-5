@@ -10,7 +10,7 @@
     <title>Weather, Together: A 2017 weather explorer</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="styles.css" />
-    <script src="vendor/d3.v7.min.js" defer></script>
+    <script src="https://d3js.org/d3.v7.min.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -172,7 +172,7 @@
               <div>
                 <h3 id="rain-heading">When the rain arrives</h3>
                 <p class="muted small">
-                  Daily precipitation · inches · includes liquid-equivalent snow
+                  Daily precipitation · inches
                 </p>
               </div>
               <span class="chart-hint">HOVER OR TAP TO INSPECT</span>
@@ -207,8 +207,8 @@
           <p id="insight" class="insight"></p>
           <p class="data-footnote">
             Gaps mean missing observations, not zero. Summaries use available
-            readings, so compare their coverage below. °F and inches are inferred
-            from the supplied CSV.
+            readings, so compare their coverage below. Temperatures are in °F
+            and precipitation is in inches.
             <a href="#limitations">Data limitations ↗</a>
           </p>
           <details class="coverage">
@@ -251,10 +251,12 @@
               How do temperature and precipitation vary across U.S. locations
               and seasons? The assignment-provided
               <code>weather.csv</code> contains 416,937 daily station records.
-              The handout attributes the transformed dataset to NOAA’s Global
-              Historical Climatology Network daily (GHCNd). This project focuses
+              The handout says the data comes from NOAA’s Global Historical
+              Climatology Network daily (GHCNd) and was transformed by filtering
+              out stations with only sparse measurements. This project focuses
               on daily minimum temperature (TMIN), maximum temperature (TMAX),
-              and precipitation (PRCP) at stations in the 50 states and D.C.
+              and precipitation (PRCP) at stations in the 50 U.S. states. The
+              file has no stations in D.C.
             </p>
             <p>
               The cleaned subset has 409,042 records at 1,561 station locations,
@@ -292,8 +294,9 @@
                 season, and date controls update both charts and every summary.
               </li>
               <li>
-                <strong>Category I, brushing and linking:</strong> dragging the
-                overview selects a date interval and zooms both charts together.
+                <strong>Category II, zooming:</strong> dragging across the
+                overview strip selects a date interval and zooms both charts
+                together.
                 The full-period overview preserves context.
               </li>
               <li>
@@ -314,25 +317,25 @@
           <article id="limitations">
             <h3>Data Cleaning &amp; Limitations</h3>
             <p>
-              The reproducible Python script normalizes station names and dates,
-              validates coordinates and numeric values, filters geographic
-              scope, and creates station identifiers from name, state, and
-              coordinates. It retains the first record for duplicate
-              station/date keys and reports conflicts. No duplicates were found
-              in this file. It excludes 7,895 records outside scope and blanks
-              both temperature fields in three records where TMIN exceeds TMAX.
-              Missing measurements remain blank, and the application never
-              imputes them.
+              We left the supplied <code>weather.csv</code> unchanged and built
+              a cleaned copy from it. We kept only stations in the 50 U.S.
+              states. This removed 7,895 records from Canadian provinces and
+              from the U.S. territories of Guam, Puerto Rico, the U.S. Virgin
+              Islands, and the Northern Mariana Islands. We removed extra spaces
+              from station names, converted dates to a standard year-month-day
+              format, and checked that coordinates and measurements were valid
+              numbers, with no negative precipitation. Each station got an
+              identifier based on its name, state, and coordinates. We checked
+              for repeated station and date pairs and found none. In three
+              records the daily low was higher than the daily high, so we
+              blanked both temperatures for those days. Missing measurements
+              stay blank, and the page never fills them in.
             </p>
             <p>
-              No data dictionary was supplied. Temperature values appear to be
-              Fahrenheit and precipitation values appear to be inches. These are
-              <strong>inferred units</strong>, not independently verified
-              metadata. The script leaves values in their supplied units. PRCP
-              describes precipitation, including the liquid equivalent of snow,
-              rather than rain alone. Raw NOAA files use different units, so
-              this transformed CSV should not be interpreted using their native
-              scaling.
+              Units come from the <code>weather.txt</code> column descriptions
+              supplied with the dataset. TMAX and TMIN are in degrees
+              Fahrenheit and PRCP is in inches. We kept these units and did not
+              convert any values.
             </p>
             <p>
               Average temperature summaries are means of available daily highs
@@ -348,16 +351,15 @@
             <p>
               January–February and September 1–21 are partial seasons, and the
               year ends early in this file. A single partial year cannot
-              establish long-term climate trends. Station observation times and
-              local conditions may also differ.
+              establish long-term climate trends.
             </p>
           </article>
           <article>
             <h3>Development Process &amp; Team</h3>
             <p>
               We explored the supplied CSV, chose a focused two-station
-              comparison, built and tested a deterministic cleaning pipeline,
-              and connected the D3 charts to a shared set of station and date
+              comparison, cleaned the data and checked the results, and
+              connected the D3 charts to a shared set of station and date
               controls. Data validation, synchronized interactions, and
               responsive layout were the main areas of work.
             </p>
@@ -366,14 +368,15 @@
               Suklikar.
             </p>
             <p>
-              <strong>Contributions:</strong> Santosh Sureshkumar led data
-              cleaning and built the D3 charts and the overview zoom strip.
-              Anitej Suklikar built the controls, page layout, and styling, and
-              wrote the write-up.
+              <strong>Contributions:</strong> We worked on and discussed the
+              visualizations together. Santosh led data cleaning and built the
+              D3 charts and the overview zoom strip. Anitej did the styling and
+              wrote the write-up. We both worked on the controls and the page
+              layout.
             </p>
             <p>
-              <strong>Total development time:</strong> about 3–4 hours in
-              total, spread over the last four weeks.
+              <strong>Total development time:</strong> about 16 people-hours.
+              Together we worked about 4 hours per week for four weeks.
             </p>
             <p>
               <strong>Most time-consuming work:</strong> keeping the linked
@@ -412,7 +415,7 @@
             <h3>AI Usage</h3>
             <p>
               We used OpenAI Codex to help inspect the data, propose the linked
-              comparison design, generate the cleaning script and D3
+              comparison design, clean the data, write the D3
               implementation, draft documentation, and verify behavior. We
               chose the weather dataset and decided on the comparison focus and
               technology. We used Claude Code (Anthropic) to review the project
@@ -421,39 +424,29 @@
             </p>
           </article>
           <article>
-            <h3>References &amp; Project Files</h3>
+            <h3>References</h3>
             <ul class="sources">
               <li>
                 <a href="data/weather.csv" download
-                  >Original assignment CSV ↗</a
-                >, the unchanged source file.
+                  >Daily Weather in the U.S., 2017 ↗</a
+                >, the dataset provided with the assignment.
               </li>
               <li>
-                <a href="data/weather_clean.csv" download>Cleaned CSV ↗</a> ·
-                <a href="data/stations.json">Station metadata ↗</a> ·
-                <a href="data/cleaning_report.json">Cleaning report ↗</a>
-              </li>
-              <li>
-                <a href="scripts/clean_data.py" download
-                  >Reproducible cleaning script ↗</a
-                >
+                <a
+                  href="https://zcliu.github.io/teaching/CMSC471/assignments/weather.txt"
+                  >weather.txt ↗</a
+                >, the column descriptions and units for the dataset.
               </li>
               <li>
                 <a
                   href="https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily"
-                  >NOAA GHCNd ↗</a
-                >, for background and measurement definitions. The local CSV came
-                from the assignment, not a new NOAA download.
+                  >NOAA Global Historical Climatology Network daily ↗</a
+                >, the original source of the data.
               </li>
               <li>
                 <a href="https://d3js.org/">D3.js v7 ↗</a>, the visualization
-                library, plus the
-                <a href="https://d3js.org/d3-brush">brush documentation ↗</a>
-                and
-                <a href="https://d3js.org/d3-fetch"
-                  >CSV loading documentation ↗</a
-                >. Charts are custom implementations using these APIs, not
-                adaptations of a specific example.
+                library. The charts are our own and do not adapt an existing
+                example.
               </li>
             </ul>
           </article>
