@@ -1,0 +1,27 @@
+{
+  "date_end": "2017-09-21",
+  "date_start": "2017-01-01",
+  "distinct_dates": 264,
+  "excluded": {
+    "outside_scope": 7895
+  },
+  "input_rows": 416937,
+  "invalid_values": {
+    "temperature_order": 3
+  },
+  "missing_clean_values": {
+    "prcp": 1959,
+    "tmax": 1229,
+    "tmin": 1276
+  },
+  "output_rows": 409042,
+  "scope": "50 U.S. states and DC; 2017 only",
+  "source_sha256": "27fadbc577ca38bee0d205d87d5b680299cdf05c9a1f9a80d1a37c6a21740324",
+  "station_count": 1561,
+  "unit_note": "No source data dictionary was supplied. Values appear already converted to Fahrenheit and inches. No unit conversion applied.",
+  "units": {
+    "prcp": "inches (inferred)",
+    "tmax": "Fahrenheit (inferred)",
+    "tmin": "Fahrenheit (inferred)"
+  }
+}
